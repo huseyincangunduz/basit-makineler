@@ -1,0 +1,11 @@
+{
+  "name": "basit-makineler-carklar-kasnaklar",
+  "version": "1.0.0",
+  "description": "Fizik Basit Makineler: Eş Merkezli Çarklar, Dişliler ve Kasnaklar Etkileşimli Simülasyonu",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "bash ./build.sh",
+    "start": "python3 -m http.server 8080"
+  }
+}

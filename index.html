@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>Basit Makineler: Çarklar ve Kasnaklar Laboratuvarı</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-icon" aria-hidden="true">⚙️</div>
+      <div>
+        <h1>Basit Makineler Laboratuvarı</h1>
+        <p class="subtitle">Dişli Çarklar, Eş Merkezli Sistemler ve Kasnaklar (<var>r</var>, 2<var>r</var>, 3<var>r</var>, 4<var>r</var>)</p>
+      </div>
+    </div>
+
+    <div class="sim-controls" role="toolbar" aria-label="Simülasyon Kontrolleri">
+      <button id="btn-play-pause" class="btn primary" type="button" title="Simülasyonu Başlat / Duraklat">
+        <span id="play-icon">▶</span> <span id="play-text">Döndür</span>
+      </button>
+      <button id="btn-step-turn" class="btn secondary" type="button" title="Motor çarkı tam 1 tur döndür">
+        ↻ +1 Tur
+      </button>
+      <button id="btn-reset-turns" class="btn ghost" type="button" title="Tur sayaçlarını ve açıları sıfırla">
+        ⟲ Turu Sıfırla
+      </button>
+
+      <div class="divider" aria-hidden="true"></div>
+
+      <label class="select-group" for="preset-select">
+        <span>Hazır Düzenek:</span>
+        <select id="preset-select" aria-label="Hazır örnek düzenek seçin">
+          <option value="coaxial-combo">1. Eş Merkezli Çark &amp; Kasnak (Klasik Soru)</option>
+          <option value="gear-train">2. Üçlü Dişli Çark Sistemi (r - 2r - 3r)</option>
+          <option value="belts-compare">3. Düz ve Çapraz Kasnak Karşılaştırması</option>
+          <option value="hoist-load">4. Eş Merkezli Çıkrık / Yük Kaldırma</option>
+          <option value="empty">Boş Laboratuvar Masası</option>
+        </select>
+      </label>
+
+      <button id="btn-clear" class="btn danger-ghost" type="button" title="Sahneyi tamamen temizle">
+        🗑️ Temizle
+      </button>
+      <button id="btn-theme" class="btn icon-btn" type="button" title="Açık / Koyu Tema Değiştir" aria-label="Tema Değiştir">
+        🌓
+      </button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <!-- Sol Araç Paneli -->
+    <aside class="sidebar left-panel" aria-label="Araçlar ve Eleman Ekleme">
+      <section class="panel-section">
+        <h2>1. Çalışma Modu</h2>
+        <div class="mode-grid" role="radiogroup" aria-label="Etkileşim Modu">
+          <label class="mode-card">
+            <input type="radio" name="tool-mode" value="select" checked>
+            <span class="mode-icon">🖐️</span>
+            <span class="mode-title">Seç &amp; Taşı</span>
+            <span class="mode-desc">Çarkları sürükle, üst üste bindir veya dişlileri kenetle</span>
+          </label>
+          <label class="mode-card">
+            <input type="radio" name="tool-mode" value="add-gear">
+            <span class="mode-icon">⚙️</span>
+            <span class="mode-title">Dişli Çark Ekle</span>
+            <span class="mode-desc">Sahneye veya mevcut bir milin üstüne çark ekle</span>
+          </label>
+          <label class="mode-card">
+            <input type="radio" name="tool-mode" value="add-pulley">
+            <span class="mode-icon">⭕</span>
+            <span class="mode-title">Kasnak Ekle</span>
+            <span class="mode-desc">Kayışla bağlanabilen düz kasnak ekle</span>
+          </label>
+          <label class="mode-card">
+            <input type="radio" name="tool-mode" value="belt-open">
+            <span class="mode-icon">🔗</span>
+            <span class="mode-title">Düz Kayış Bağla</span>
+            <span class="mode-desc">İki çarkı/kasnağı aynı yönde dönecek şekilde bağla</span>
+          </label>
+          <label class="mode-card">
+            <input type="radio" name="tool-mode" value="belt-cross">
+            <span class="mode-icon">❌</span>
+            <span class="mode-title">Çapraz Kayış Bağla</span>
+            <span class="mode-desc">İki çarkı/kasnağı zıt yönde dönecek şekilde bağla</span>
+          </label>
+          <label class="mode-card">
+            <input type="radio" name="tool-mode" value="add-load">
+            <span class="mode-icon">🏋️</span>
+            <span class="mode-title">Yük (Ağırlık) As</span>
+            <span class="mode-desc">Tıklanan çarka/kasnağa ip ve G yükü bağla</span>
+          </label>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <h2>2. Yarıçap Seçimi (<var>r</var>)</h2>
+        <p class="section-hint">Yeni eklenecek veya seçili çarkın yarıçap boyutu:</p>
+        <div class="radius-selector" role="radiogroup" aria-label="Yarıçap Boyutu">
+          <label class="radius-pill">
+            <input type="radio" name="wheel-radius" value="1">
+            <span class="r-value">1r</span>
+            <span class="r-teeth">12 diş</span>
+          </label>
+          <label class="radius-pill">
+            <input type="radio" name="wheel-radius" value="2" checked>
+            <span class="r-value">2r</span>
+            <span class="r-teeth">24 diş</span>
+          </label>
+          <label class="radius-pill">
+            <input type="radio" name="wheel-radius" value="3">
+            <span class="r-value">3r</span>
+            <span class="r-teeth">36 diş</span>
+          </label>
+          <label class="radius-pill">
+            <input type="radio" name="wheel-radius" value="4">
+            <span class="r-value">4r</span>
+            <span class="r-teeth">48 diş</span>
+          </label>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <h2>3. Görünüm Ayarları</h2>
+        <div class="toggle-list">
+          <label class="checkbox-row">
+            <input type="checkbox" id="chk-show-labels" checked>
+            <span>Yarıçap ve Harf Etiketleri (<var>K</var>, <var>L</var>, <var>r</var>, 2<var>r</var>)</span>
+          </label>
+          <label class="checkbox-row">
+            <input type="checkbox" id="chk-show-turns" checked>
+            <span>Tur Sayısı ve Yön Okları (<var>n</var>, <var>ω</var>)</span>
+          </label>
+          <label class="checkbox-row">
+            <input type="checkbox" id="chk-snap-grid" checked>
+            <span>Akıllı Mıknatıslanma (Üst Üste &amp; Dişli)</span>
+          </label>
+        </div>
+      </section>
+
+      <section class="panel-section physics-rules-box">
+        <h2>📌 Temel Fizik Kuralları</h2>
+        <ul class="rules-list">
+          <li><strong>Üst Üste (Eş Merkezli):</strong> Aynı mildeki çarkların dönüş yönleri ve tur sayıları eşittir (<var>n</var><sub>1</sub> = <var>n</var><sub>2</sub>).</li>
+          <li><strong>Dişli Teması:</strong> Birbirine değen dişliler <em>zıt yönde</em> döner (<var>n</var><sub>1</sub>·<var>r</var><sub>1</sub> = <var>n</var><sub>2</sub>·<var>r</var><sub>2</sub>).</li>
+          <li><strong>Düz Kayış:</strong> Dönüş yönleri <em>aynıdır</em> (<var>n</var><sub>1</sub>·<var>r</var><sub>1</sub> = <var>n</var><sub>2</sub>·<var>r</var><sub>2</sub>).</li>
+          <li><strong>Çapraz Kayış:</strong> Dönüş yönleri <em>zıttır</em> (<var>n</var><sub>1</sub>·<var>r</var><sub>1</sub> = <var>n</var><sub>2</sub>·<var>r</var><sub>2</sub>).</li>
+          <li><strong>Yük İlerleme Miktarı:</strong> <var>h</var> = <var>n</var> · 2π<var>r</var></li>
+        </ul>
+      </section>
+    </aside>
+
+    <!-- Orta Canvas Alanı -->
+    <section class="canvas-stage" aria-label="Simülasyon Sahnesi">
+      <div id="status-banner" class="status-banner" role="status" aria-live="polite">
+        💡 İpucu: Çarkları sürükleyerek başka bir çarkın merkezine bırakırsanız <strong>üst üste (eş merkezli)</strong> biner; yanına yaklaştırırsanız <strong>dişliler kenetlenir</strong>.
+      </div>
+
+      <div id="jam-alert" class="jam-alert" hidden role="alert">
+        ⚠️ <strong>Sistem Kilitlendi!</strong> Kapalı bağlantı döngüsünde yön veya hız çelişkisi var. Çarklar dönemez.
+      </div>
+
+      <canvas id="sim-canvas"></canvas>
+
+      <div class="canvas-hud">
+        <div class="hud-badge">
+          <span>Motor Girişi:</span>
+          <strong id="hud-motor-info">1 Tur (Saat Yönü ↻)</strong>
+        </div>
+        <div class="zoom-controls">
+          <button id="btn-zoom-out" class="btn icon-btn" type="button" title="Uzaklaştır">−</button>
+          <span id="zoom-label">100%</span>
+          <button id="btn-zoom-in" class="btn icon-btn" type="button" title="Yakınlaştır">+</button>
+          <button id="btn-zoom-reset" class="btn icon-btn" type="button" title="Görünümü Ortala">🎯</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sağ Denetleyici & Tablo Paneli -->
+    <aside class="sidebar right-panel" aria-label="Seçili Eleman ve Hesaplama Tablosu">
+      <section class="panel-section" id="inspector-section">
+        <h2>Seçili Mil / Çark Denetçisi</h2>
+        <div id="inspector-content" class="inspector-empty">
+          Sahneden bir çarka veya mile tıklayarak özelliklerini düzenleyebilir, aynı merkeze ikinci bir çark/kasnak ekleyebilirsiniz.
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <h2>Canlı Kinematik Tablosu</h2>
+        <p class="section-hint">Motor <strong><span id="table-ref-turns">1</span> tur</strong> döndüğünde tüm çarkların durumu:</p>
+        <div class="table-wrapper">
+          <table class="kinematics-table" aria-label="Çarkların Tur ve Yön Tablosu">
+            <thead>
+              <tr>
+                <th>Çark</th>
+                <th>Tür</th>
+                <th>Yarıçap</th>
+                <th>Yön</th>
+                <th>Tur (<var>n</var>)</th>
+              </tr>
+            </thead>
+            <tbody id="kinematics-tbody">
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel-section" id="loads-section" hidden>
+        <h2>Asılı Yüklerin Hareketi (<var>h</var>)</h2>
+        <div id="loads-summary" class="loads-list"></div>
+      </section>
+
+      <section class="panel-section" id="belts-section">
+        <h2>Kayış Bağlantıları</h2>
+        <div id="belts-list" class="belts-list"></div>
+      </section>
+    </aside>
+  </main>
+
+  <script id="app-loader">
+    if (window.location.protocol === 'file:') {
+      const script = document.createElement('script');
+      script.src = 'dist/app.bundle.js';
+      document.body.appendChild(script);
+    } else {
+      const script = document.createElement('script');
+      script.type = 'module';
+      script.src = 'js/main.js';
+      document.body.appendChild(script);
+    }
+  </script>
+</body>
+</html>
